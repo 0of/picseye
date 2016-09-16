@@ -1,0 +1,3 @@
+[submodule "third_party/bktree_leveldb"]
+	path = third_party/bktree_leveldb
+	url = https://github.com/0of/bktree-leveldb.git
