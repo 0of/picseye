@@ -1,5 +1,7 @@
 #include <vector>
 #include <fstream>
+#include <limits>
+#include <cstdlib>
 
 #include <zmq.hpp>
 
@@ -19,13 +21,15 @@ void successReply(const MatchRequest& req, zmq::message_t& message, const std::v
   message.move(&reply);
 }
 
-void start(const std::string& dbPath) {
+void start(const std::string& dbPath, std::uint16_t port) {
   MatchTree bktree{ MatchTree::element_type::New(dbPath, dbPath + "_i") };
   MatchService service{ bktree };
 
+  std::string url = "tcp://0.0.0.0:" + std::to_string(port);
+
   zmq::context_t context{1};
   zmq::socket_t socket (context, ZMQ_REP);
-  socket.bind ("tcp://0.0.0.0:50002");
+  socket.bind (url);
     
   while (true) {
     zmq::message_t request;
@@ -53,7 +57,16 @@ void start(const std::string& dbPath) {
   }
 }
 
-int main() {
-  start("/tmp/tmpdb");
+int main(int argc, char* argv[]) {
+  if (argc < 3) {
+    // missing required arguments
+    return 1;
+  }
+
+  auto dbPath = argv[1];
+  auto port = std::atoi(argv[2]);
+
+  start(dbPath, static_cast<std::uint16_t>(port));
+
   return 0;
 }
