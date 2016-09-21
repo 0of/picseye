@@ -26,7 +26,10 @@ public:
 
     // connect
     const char *addresses[] = {
-      "tcp://127.0.0.1:50002"
+      "tcp://127.0.0.1:50000",
+      "tcp://127.0.0.1:50001",
+      "tcp://127.0.0.1:50002",
+      "tcp://127.0.0.1:50003"
     };
 
     for (auto i = 0; i != sizeof(addresses) / sizeof(addresses[0]); ++i) {
@@ -118,7 +121,13 @@ public:
       ::memset(q, 0, sizeof(zmq::pollitem_t) * MAX_SERVERS_COUNT);
 
       for (auto i = 0; i != count; ++i) {
-        if (p[i].revents == ZMQ_POLLOUT) {
+        if (p[i].revents == 0) {
+          q[newCount].socket = p[i].socket;
+          q[newCount].events = p[i].events;
+          
+          ++newCount;
+
+        } else if (p[i].revents == ZMQ_POLLOUT) {
           auto range = ranges.back();
           sendRequest(range.first, range.second, _sockets[p[i].socket]);
           ranges.pop_back();
