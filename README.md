@@ -22,3 +22,13 @@ common protocol and data structures
 - cpp-client wrapped
 - Objective-c++ OpenCV 2.4
 - directly access clj-server
+
+## tools
+### descriptors-import
+extract images descriptors and save them to database
+
+### local-pics-tester
+test matching results
+
+### pics-fetch
+fetch images from remote servers
